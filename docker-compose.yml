@@ -1,0 +1,42 @@
+version: "1"
+
+services:
+
+    postgres:
+        container_name: postgres
+        image: postgres:14
+        restart: always
+        volumes:
+        - db-data:/var/lib/postgresql/data
+        environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=DefaultPassword
+        ports:
+            - "5421:5432"
+        networks:
+        - api-network
+
+    api:
+        container_name: api
+        build: 
+            dockerfile: ./Backend/Knowledge_Base/Dockerfile
+        ports:
+        - "5000:80"
+        - "5001:443"
+        depends_on:
+        - "postgres"
+        environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - API_DB_HOST=postgres
+        - API_DB_PORT=5432
+        - API_DB_USER=postgres
+        - API_DB_PASSWORD=DefaultPassword
+        networks: 
+        - api-network
+
+networks:
+    api-network:
+        driver: bridge
+volumes:
+    db-data:
+        name: knowledge-base-data

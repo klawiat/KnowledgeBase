@@ -1,0 +1,7 @@
+API_DB_HOST=localhost
+API_DB_PORT=5432
+API_DB_BASE=KnowledgeBase
+API_DB_USER=postgres
+API_DB_PASSWORD=DefaultPassword
+API_DB_POLLING=false
+ASPNETCORE_ENVIRONMENT=Development
