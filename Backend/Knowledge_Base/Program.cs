@@ -18,11 +18,11 @@ namespace Knowledge_Base
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            string host = Environment.GetEnvironmentVariable("API_DB_HOST") ?? "localhost";
-            string port = Environment.GetEnvironmentVariable("API_DB_PORT") ?? "5432";
-            string database = Environment.GetEnvironmentVariable("API_DB_BASE") ?? "KnowledgeBase";
-            string userName = Environment.GetEnvironmentVariable("API_DB_USER") ?? "postgres";
-            string password = Environment.GetEnvironmentVariable("API_DB_PASSWORD") ?? "DefaultPassword";
+            string host = Environment.GetEnvironmentVariable("POSTGRES_HOST") ?? "localhost";
+            string port = Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432";
+            string database = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "KnowledgeBase";
+            string userName = Environment.GetEnvironmentVariable("POSTGRES_USER") ?? "postgres";
+            string password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD") ?? "DefaultPassword";
             string connection = $"Host={host};Port={port};Database={database};Username={userName};Password={password};";
             builder.Services.AddControllers();
             string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
