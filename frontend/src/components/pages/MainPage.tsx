@@ -80,6 +80,9 @@ export default function MainPage() {
                     hover:border-primary-disabled
                     cursor-w-resize
                 "
+                classList={{
+                    "border-primary-disabled": isResizing()
+                }}
                 onMouseDown={handleMouseDown}
             ></div>
             <div
