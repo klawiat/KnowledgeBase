@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.DTO
 {
-    public class ReferencesDTO
+    public class ReferencesWithTitleDTO
     {
-        public int FromNote { get; set; }
-        public int ToNote { get; set; }
+        public int FromNote{ get; set;}
+        public int ToNote { get; set;}
+        public string Title { get; set;}
     }
 }

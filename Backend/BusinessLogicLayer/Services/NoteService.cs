@@ -2,8 +2,9 @@
 using BusinessLogicLayer.DTO;
 using BusinessLogicLayer.Interfaces;
 using BusinessLogicLayer.Response;
+using DataLayer.EF;
 using DataLayer.Entities;
-using DataLayer.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,20 @@ namespace BusinessLogicLayer.Services
 {
     public class NoteService : INoteService
     {
-        private readonly IRepository<Note> notes;
-        private readonly IRepository<Reference> references;
-        public NoteService(IRepository<Note> notes, IRepository<Reference> references)
+        private readonly AppDbContext _appDbContext;
+        private DbSet<Note> notes;
+        private DbSet<Reference> references;
+        public NoteService(AppDbContext context)
         {
-            this.notes = notes;
-            this.references = references;
+            this.notes = context.Notes;
+            this.references = context.Refs;
+            this._appDbContext = context;
         }
+        /// <summary>
+        /// Создает заметку и заносит её в базу данных
+        /// </summary>
+        /// <param name="noteDTO">Объект заметки</param>
+        /// <returns>Объект содержащий статус код, описание(если произошла ошибка) и данные</returns>
         public IResponse<bool> CreateNote(NoteDTO noteDTO)
         {
             try
@@ -31,7 +39,8 @@ namespace BusinessLogicLayer.Services
                     cfg.CreateMap<NoteDTO, Note>();
                 }).CreateMapper();
                 Note note = mapper.Map<NoteDTO, Note>(noteDTO);
-                notes.Create(note);
+                notes.Add(note);
+                _appDbContext.SaveChanges();
                 return new BaseResponse<bool> { StatusCode = HttpStatusCode.OK, Data = true, Description = "Успех!" };
             }
             catch
@@ -39,15 +48,20 @@ namespace BusinessLogicLayer.Services
                 return new BaseResponse<bool> { StatusCode = HttpStatusCode.InternalServerError, Data = false, Description = "Ошибка!" };
             }
         }
-
+        /// <summary>
+        /// Удаляет заметку из бд по выбранному идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор заметки</param>
+        /// <returns>Объект содержащий статус код, описание(если произошла ошибка) и данные</returns>
         public IResponse<bool> DeleteNote(int id)
         {
             try
             {
-                var note = notes.Get(id);
+                var note = notes.Find(id);
                 if (note != null)
                 {
-                    notes.Delete(id);
+                    notes.Remove(note);
+                    _appDbContext.SaveChanges();
                     return new BaseResponse<bool> { StatusCode = HttpStatusCode.OK, Description = "Успех!", Data = true };
                 }
                 else
@@ -60,12 +74,16 @@ namespace BusinessLogicLayer.Services
                 return new BaseResponse<bool> { StatusCode = HttpStatusCode.InternalServerError, Description = ex.Message, Data = false };
             }
         }
-
+        /// <summary>
+        /// Редактирует заметку в бд
+        /// </summary>
+        /// <param name="noteDTO">Объект заметки</param>
+        /// <returns>Объект содержащий статус код, описание(если произошла ошибка) и данные</returns>
         public IResponse<bool> EditNote(NoteDTO noteDTO)
         {
             try
             {
-                Note note = notes.Get(noteDTO.Id);
+                Note note = notes.Find(noteDTO.Id);
                 if (note == null)
                     throw new Exception("Заметка отсутствует в системе!");
                 note.Title = noteDTO.Title;
@@ -78,15 +96,17 @@ namespace BusinessLogicLayer.Services
                 return new BaseResponse<bool> { StatusCode = HttpStatusCode.InternalServerError, Data = false, Description = "Ошибка!" };
             }
         }
-
+        /// <summary>
+        /// Позволяет получить конкретну заметку по id
+        /// </summary>
+        /// <param name="id">Идентификатор заметки</param>
+        /// <returns>Объект содержащий статус код, описание(если произошла ошибка) и данные</returns>
         public IResponse<NoteDTO> GetNote(int id)
         {
-            Note note = notes.Get(id);
+            Note note = notes.Find(id);
             if (note == null)
             {
-                BaseResponse<NoteDTO> response = new();
-                response.StatusCode = HttpStatusCode.NotFound;
-                response.Description = "Заметка с выбранным id не найдена";
+                BaseResponse<NoteDTO> response = new() { StatusCode= HttpStatusCode.NotFound, Description = "Заметка с выбранным id не найдена"};
                 return response;
             }
             else
@@ -95,15 +115,14 @@ namespace BusinessLogicLayer.Services
                 {
                     cfg.CreateMap<Note, NoteDTO>();
                 }).CreateMapper();
-                NoteDTO transferNote = mapper.Map<Note, NoteDTO>(notes.Get(id));
-                BaseResponse<NoteDTO> response = new();
-                response.StatusCode = HttpStatusCode.OK;
-                response.Data = transferNote;
-                response.Description = "Успех!";
-                return response;
+                NoteDTO transferNote = mapper.Map<Note, NoteDTO>(note);
+                return new BaseResponse<NoteDTO> { StatusCode=HttpStatusCode.OK,Data=transferNote,Description="Успех!"};
             }
         }
-
+        /// <summary>
+        /// Возвращает все заметки содержащиеся в бд
+        /// </summary>
+        /// <returns></returns>
         public IResponse<IEnumerable<NoteDTO>> GetNotes()
         {
             try
@@ -112,8 +131,8 @@ namespace BusinessLogicLayer.Services
                 {
                     cfg.CreateMap<Note, NoteDTO>();
                 }).CreateMapper();
-                var notesDto = mapper.Map<IEnumerable<Note>, List<NoteDTO>>(notes.GetAll().OrderBy(item => item.Id));
-                if (notesDto == null)
+                var notesDto = mapper.Map<IEnumerable<Note>, List<NoteDTO>>(notes.OrderBy(item => item.Id));
+                if (notesDto == null || notesDto.Count==0)
                     throw new Exception("Список пуст");
                 return new BaseResponse<IEnumerable<NoteDTO>>() { StatusCode = HttpStatusCode.OK, Data = notesDto, Description = "Успех!" };
             }

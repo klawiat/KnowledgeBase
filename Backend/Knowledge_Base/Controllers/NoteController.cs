@@ -10,6 +10,7 @@ using System.Net;
 namespace Knowledge_Base.Controllers
 {
     [Route("Notes")]
+    [Route("/")]
     public class NoteController : Controller
     {
         [HttpGet]

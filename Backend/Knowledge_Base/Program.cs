@@ -2,8 +2,6 @@
 using System;
 using DataLayer.EF;
 using Microsoft.OpenApi.Models;
-using DataLayer.Interfaces;
-using DataLayer.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Knowledge_Base.Interfaces;
 using Knowledge_Base.Services;
@@ -18,19 +16,20 @@ namespace Knowledge_Base
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            string host = Environment.GetEnvironmentVariable("API_DB_HOST") ?? "localhost";
-            string port = Environment.GetEnvironmentVariable("API_DB_PORT") ?? "5432";
-            string database = Environment.GetEnvironmentVariable("API_DB_BASE") ?? "KnowledgeBase";
-            string userName = Environment.GetEnvironmentVariable("API_DB_USER") ?? "postgres";
-            string password = Environment.GetEnvironmentVariable("API_DB_PASSWORD") ?? "DefaultPassword";
+            string host = Environment.GetEnvironmentVariable("POSTGRES_HOST") ?? "localhost";
+            string port = Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432";
+            string database = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "KnowledgeBase";
+            string userName = Environment.GetEnvironmentVariable("POSTGRES_USER") ?? "postgres";
+            string password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD") ?? "DefaultPassword";
             string connection = $"Host={host};Port={port};Database={database};Username={userName};Password={password};";
             builder.Services.AddControllers();
             string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<AppDbContext>(cfg => cfg.UseNpgsql(connectionString ?? connection));
             builder.Services.AddSingleton<IMarkdown, MarkdownService>();
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
-            builder.Services.AddScoped<IRepository<Note>, NoteRepository>();
-            builder.Services.AddScoped<IRepository<Reference>, ReferenceRepository>();
+            /*builder.Services.AddScoped<IRepository<Note>, NoteRepository>();
+            builder.Services.AddScoped<IRepository<Reference>, ReferenceRepository>();*/
+            builder.Services.AddScoped<IReferenceService, ReferenceService>();
             builder.Services.AddScoped<INoteService, NoteService>();
             builder.Services.AddSwaggerGen(cfg =>
             {

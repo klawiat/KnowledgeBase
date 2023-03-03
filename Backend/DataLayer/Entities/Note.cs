@@ -12,7 +12,7 @@ namespace DataLayer.Entities
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
-        public List<Reference> Refs { get; set; }
-        public List<Reference> Referring { get; set; }
+        public List<Reference> ReferenceTo { get; set; }
+        public List<Reference> ReferenceFrom { get; set; }
     }
 }
