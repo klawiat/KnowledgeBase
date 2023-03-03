@@ -7,11 +7,11 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Backend/Knowledge_Base/Knowledge_Base.csproj", "Knowledge_Base/"]
-COPY ["Backend/BusinessLogicLayer/BusinessLogicLayer.csproj", "BusinessLogicLayer/"]
-COPY ["Backend/DataLayer/DataLayer.csproj", "DataLayer/"]
+COPY ["backend/Knowledge_Base/Knowledge_Base.csproj", "Knowledge_Base/"]
+COPY ["backend/BusinessLogicLayer/BusinessLogicLayer.csproj", "BusinessLogicLayer/"]
+COPY ["backend/DataLayer/DataLayer.csproj", "DataLayer/"]
 RUN dotnet restore "Knowledge_Base/Knowledge_Base.csproj"
-COPY ./Backend/ .
+COPY ./backend/ .
 WORKDIR "/src/Knowledge_Base"
 RUN dotnet build "Knowledge_Base.csproj" -c Release -o /app/build
 
