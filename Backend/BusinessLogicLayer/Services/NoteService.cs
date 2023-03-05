@@ -19,11 +19,13 @@ namespace BusinessLogicLayer.Services
         private readonly AppDbContext _appDbContext;
         private DbSet<Note> notes;
         private DbSet<Reference> references;
-        public NoteService(AppDbContext context)
+        private readonly ILinkFinderService<int> linkService;
+        public NoteService(AppDbContext context,ILinkFinderService<int> service)
         {
             this.notes = context.Notes;
             this.references = context.Refs;
             this._appDbContext = context;
+            this.linkService = service;
         }
         /// <summary>
         /// Создает заметку и заносит её в базу данных
@@ -40,6 +42,11 @@ namespace BusinessLogicLayer.Services
                 }).CreateMapper();
                 Note note = mapper.Map<NoteDTO, Note>(noteDTO);
                 notes.Add(note);
+                _appDbContext.SaveChanges();
+                int noteId = note.Id;
+                List<int> refs = linkService.GetLinksFromMarkdown(note.Content).ToList();
+                List<Reference> references = refs.Select(x=>new Reference { FromId=noteId,ToId=x}).ToList();
+                this.references.AddRange(references);
                 _appDbContext.SaveChanges();
                 return new BaseResponse<bool> { StatusCode = HttpStatusCode.OK, Data = true, Description = "Успех!" };
             }
@@ -60,7 +67,8 @@ namespace BusinessLogicLayer.Services
                 var note = notes.Find(id);
                 if (note != null)
                 {
-                    notes.Remove(note);
+                    this.notes.Remove(note);
+                    this.references.Where(x=>x.FromId==id).ExecuteDelete();
                     _appDbContext.SaveChanges();
                     return new BaseResponse<bool> { StatusCode = HttpStatusCode.OK, Description = "Успех!", Data = true };
                 }
@@ -89,6 +97,14 @@ namespace BusinessLogicLayer.Services
                 note.Title = noteDTO.Title;
                 note.Content = noteDTO.Content;
                 notes.Update(note);
+                _appDbContext.SaveChanges();
+                int noteId = note.Id;
+                this.references.Where(x=>x.FromId== noteId).ExecuteDelete();
+                _appDbContext.SaveChanges();
+                List<int> refs = linkService.GetLinksFromMarkdown(noteDTO.Content).ToList();
+                List<Reference> references = refs.Select(x=>new Reference { FromId=noteId,ToId=x}).ToList();
+                this.references.AddRange(references);
+                _appDbContext.SaveChanges();
                 return new BaseResponse<bool> { StatusCode = HttpStatusCode.OK, Data = true, Description = "Успех!" };
             }
             catch

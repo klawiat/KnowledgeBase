@@ -29,6 +29,7 @@ namespace Knowledge_Base
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             /*builder.Services.AddScoped<IRepository<Note>, NoteRepository>();
             builder.Services.AddScoped<IRepository<Reference>, ReferenceRepository>();*/
+            builder.Services.AddScoped<ILinkFinderService<int>, LinkFinderService>();
             builder.Services.AddScoped<IReferenceService, ReferenceService>();
             builder.Services.AddScoped<INoteService, NoteService>();
             builder.Services.AddSwaggerGen(cfg =>

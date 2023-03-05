@@ -3,14 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Knowledge_Base", "Knowledge_Base\Knowledge_Base.csproj", "{985707EB-44C0-4201-9851-72EC8A103A80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Knowledge_Base", "Knowledge_Base\Knowledge_Base.csproj", "{985707EB-44C0-4201-9851-72EC8A103A80}"
 	ProjectSection(ProjectDependencies) = postProject
 		{68D9BDB1-CDB3-44F5-AF14-EE001CFD17FB} = {68D9BDB1-CDB3-44F5-AF14-EE001CFD17FB}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{68D9BDB1-CDB3-44F5-AF14-EE001CFD17FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataLayer\DataLayer.csproj", "{68D9BDB1-CDB3-44F5-AF14-EE001CFD17FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogicLayer", "BusinessLogicLayer\BusinessLogicLayer.csproj", "{F0532233-2797-4755-BB30-B065F8629AFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogicLayer", "BusinessLogicLayer\BusinessLogicLayer.csproj", "{F0532233-2797-4755-BB30-B065F8629AFE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{68D9BDB1-CDB3-44F5-AF14-EE001CFD17FB} = {68D9BDB1-CDB3-44F5-AF14-EE001CFD17FB}
 	EndProjectSection

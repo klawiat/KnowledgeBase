@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Interfaces
 {
-    public interface ILinkFinder<T>
+    public interface ILinkFinderService<T>
     {
         IEnumerable<T> GetLinksFromHTML(string html);
         IEnumerable<T> GetLinksFromMarkdown(string markdown);
