@@ -42,7 +42,7 @@ namespace BusinessLogicLayer.Services
             try
             {
                 var refs = references.Where(x=>x.FromId == id);
-                if (refs.Any())
+                if (refs==null || !refs.Any())
                     throw new ArgumentNullException();
                 return new BaseResponse<IEnumerable<Reference>> {  StatusCode = HttpStatusCode.OK,Data = refs,Description="Успех" };
             }
