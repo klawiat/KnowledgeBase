@@ -37,6 +37,24 @@ namespace BusinessLogicLayer.Services
             }
         }
 
+        public IResponse<IEnumerable<Reference>> GetAll()
+        {
+            try
+            {
+                var refs = references.ToList();
+                if (refs.Any() && refs!=null)
+                {
+                    return new BaseResponse<IEnumerable<Reference>>() { StatusCode = HttpStatusCode.OK, Data = refs, Description = "Успех" };
+                }
+                else
+                    throw new ArgumentNullException();
+            }
+            catch
+            {
+                return new BaseResponse<IEnumerable<Reference>> { StatusCode = HttpStatusCode.InternalServerError, Description = "Ошибка" };
+            }
+        }
+
         public IResponse<IEnumerable<Reference>> GetByNoteId(int id)
         {
             try
