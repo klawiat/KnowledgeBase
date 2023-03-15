@@ -13,6 +13,11 @@ namespace Knowledge_Base.Controllers
     [Route("/")]
     public class NoteController : Controller
     {
+        private INoteService service;
+        public NoteController(INoteService service)
+        {
+            this.service = service;
+        }
         [HttpGet]
         [Route("/")]
         //[Route("All")]
@@ -27,7 +32,7 @@ namespace Knowledge_Base.Controllers
             return Json(notes);
         }
         [HttpGet("{id:int}")]
-        public IActionResult CurrentNote([FromRoute] int id, [FromQuery] bool raw, [FromServices] INoteService service, [FromServices] IMarkdown markdown, [FromServices] IMapper mapper)
+        public IActionResult CurrentNote([FromRoute] int id, [FromQuery] bool raw, [FromServices] IMarkdown markdown, [FromServices] IMapper mapper)
         {
             var response = service.GetNote(id);
             if (response.StatusCode != HttpStatusCode.OK)
@@ -42,7 +47,7 @@ namespace Knowledge_Base.Controllers
             return Json(note);
         }
         [HttpPost("/")]
-        public IActionResult CreateNote([FromBody] NoteViewModel note, [FromServices] INoteService service, [FromServices] IMapper mapper)
+        public IActionResult CreateNote([FromBody] NoteViewModel note, [FromServices] IMapper mapper)
         {
             if (ModelState.IsValid)
             {
@@ -59,7 +64,7 @@ namespace Knowledge_Base.Controllers
             return Ok();
         }
         [HttpPut("{id:int}")]
-        public IActionResult EditNote([FromRoute] int id, [FromBody] NoteViewModel note, [FromServices] INoteService service, [FromServices] IMarkdown markdown, [FromServices] IMapper mapper)
+        public IActionResult EditNote([FromRoute] int id, [FromBody] NoteViewModel note, [FromServices] IMarkdown markdown, [FromServices] IMapper mapper)
         {
             if (ModelState.IsValid)
             {
@@ -76,7 +81,7 @@ namespace Knowledge_Base.Controllers
             return Ok(note);
         }
         [HttpDelete("{id:int}")]
-        public IActionResult DeleteNote([FromRoute] int id, [FromServices] INoteService service)
+        public IActionResult DeleteNote([FromRoute] int id)
         {
             var response = service.DeleteNote(id);
             if (response.StatusCode != HttpStatusCode.OK)

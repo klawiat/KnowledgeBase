@@ -9,7 +9,7 @@ namespace BusinessLogicLayer.Interfaces
 {
     public interface IReferenceService
     {
-        //IResponse<IEnumerable<Reference>> GetAll();
+        IResponse<IEnumerable<Reference>> GetAll();
         IResponse<IEnumerable<Reference>> GetByNoteId(int id);
         IResponse<bool> DeleteByNoteId(int id);
     }
